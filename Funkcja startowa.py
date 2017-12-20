@@ -6,11 +6,20 @@ from poliastro.bodies import Earth, Sun
 from poliastro.twobody import Orbit
 from poliastro import iod
 from poliastro import ephem  
+import warnings 
+
+def fxn():
+    warnings.warn("deprecated", DeprecationWarning)
 
 def input_func():
     # Input parameters:
     print (' ')
     print ('Dane statku oraz misji')
+    
+with warnings.catch_warnings():
+    warnings.simplefilter("ignore")
+    fxn()
+    
 '''
     check = True
     while check:
@@ -100,20 +109,22 @@ def input_func():
 
     return m_ship, I_sp, H, date_0, date_1
    '''
-date_0 = '2030-01-01 12:00'        # date in ISO
-date_1 = '2045-01-01 12:00'
-date_0 = time.Time(date_0, format='iso', scale='utc')       # Time class in ISO
-date_1 = time.Time(date_1, format='iso', scale='utc')
-m_ship = 1000 * u.kg
-I_sp = 4600 /1000 * u.km / u.s
-H = 300 * u.km
+    date_0 = '2030-01-01 12:00'        # date in ISO
+    date_1 = '2045-01-01 12:00'
+    date_0 = time.Time(date_0, format='iso', scale='utc')       # Time class in ISO
+    date_1 = time.Time(date_1, format='iso', scale='utc')
+    date_0 = time.Time(date_0.jd, format='jd', scale='utc')    
+    date_1 = time.Time(date_1.jd, format='jd', scale='utc')
+    m_ship = 1000 * u.kg
+    I_sp = 4600 /1000 * u.km / u.s
+    H = 300 * u.km
 
 
 
-import start_opt
-step = 1000
-delta_v, v_out, date_in, date_out, m_prop = start_opt.start_date_optimal(H, date_0, date_1, m_ship, I_sp, step)
+    import start_opt
+    step = 10
+    delta_v, v_out, date_in, date_out, m_prop = start_opt.start_date_optimal(H, date_0, date_1, m_ship, I_sp, step)
 
-print (delta_v, v_out, date_in, date_out, m_prop) 
+    print (delta_v, v_out, date_in, date_out, m_prop) 
 
 
