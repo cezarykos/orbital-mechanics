@@ -5,7 +5,6 @@ from astropy import time
 from poliastro.bodies import Earth, Sun
 from poliastro.twobody import Orbit
 from poliastro import iod
-from poliastro import ephem  
 
 def transit_optimal(date, transit_min, transit_max, planet1, planet2, vs0, step):
     
@@ -22,12 +21,14 @@ def transit_optimal(date, transit_min, transit_max, planet1, planet2, vs0, step)
         date_iso = time.Time(str(date.iso), format='iso', scale='utc')       
         date_arrival_iso = time.Time(str(date_arrival.iso), format='iso', scale='utc')      
 
-        r1, vp1 = ephem.get_body_ephem(planet1, date_iso)     
-        r2, vp2 = ephem.get_body_ephem(planet2, date_arrival_iso)     
+        r1= Orbit.from_body_ephem(planet1, date_iso)
+        r2= Orbit.from_body_ephem(planet2, date_arrival_iso)
+        r_1, v_1 = r1.rv()
+        r_2, v_2 = r2.rv()     
 
-        (vs1, vs2), = iod.lambert(Sun.k, r1, r2, tof)       
+        (vs1, vs2), = iod.lambert(Sun.k, r_1, r_2, tof)       
 
-        dv_vector = vs1 - (vs0 + (vp1 / (24*3600) * u.day / u.s))     
+        dv_vector = vs1 - (vs0 + (v_1 / (24*3600) * u.day / u.s))     
         dv = np.linalg.norm(dv_vector/10) * u.km / u.s     
 
         if step_one:        
@@ -41,6 +42,6 @@ def transit_optimal(date, transit_min, transit_max, planet1, planet2, vs0, step)
                 date_arrival_final = date_arrival
                 vs2_ = vs2
 
-        date_arrival += step
+        date_arrival += step * u.day
 
     return dv_final, date_arrival_final, vs2_
