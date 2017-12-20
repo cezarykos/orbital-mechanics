@@ -125,6 +125,7 @@ with warnings.catch_warnings():
     step = 10
     delta_v, v_out, date_in, date_out, m_prop = start_opt.start_date_optimal(H, date_0, date_1, m_ship, I_sp, step)
 
-    print (delta_v, v_out, date_in, date_out, m_prop) 
-
+    print (delta_v, v_out, date_in, date_out, m_prop)
+    import check_func
+    check_func.check_uran_orbit(date_out, v_out, m_ship, I_sp)
 
